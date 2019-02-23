@@ -16,36 +16,83 @@ var WaveformGenerator = {
                     var currentTime = i / sampleRate;
                     result.push(amp * Math.sin(2.0 * Math.PI * frequency * currentTime));
                 }
+
                 break;
 
             case "square-time": // Square wave, time domain
-                /**
-                * TODO: Complete this generator
-                **/
+                var oneCycle = sampleRate / frequency;
+                var halfCycle = oneCycle / 2;
+
+                for (var i = 0; i < totalSamples; ++i) {
+                    var posInCycle = i % oneCycle;
+                    
+                    if (posInCycle < halfCycle) {
+                        result.push(amp);
+                    }
+                    else {
+                        result.push(-amp);
+                    }
+                }
+
                 break;
 
             case "square-additive": // Square wave, additive synthesis
-                /**
-                * TODO: Complete this generator
-                **/
+                for (var i = 0; i < totalSamples; ++i) {
+                    var currentTime = i / sampleRate;
+                    var sample = 0;
+                    var j = 1;
+
+                    while (j * frequency < nyquistFrequency) {
+                        sample += (1.0 / j) * Math.sin(2.0 * Math.PI * j * frequency * currentTime);
+                        j += 2;
+                    }
+
+                    result.push(sample);
+                }
+
                 break;
 
             case "sawtooth-time": // Sawtooth wave, time domain
-                /**
-                * TODO: Complete this generator
-                **/
+                var oneCycle = sampleRate / frequency;
+                var decreaseRate = amp * 2 / oneCycle;
+                
+                for (var i = 0; i < totalSamples; ++i) {
+                    var posInCycle = i % oneCycle;
+                    result.push(amp - decreaseRate * posInCycle);
+                }
+
                 break;
 
             case "sawtooth-additive": // Sawtooth wave, additive synthesis
-                /**
-                * TODO: Complete this generator
-                **/
+                for (var i = 0; i < totalSamples; ++i) {
+                    var currentTime = i / sampleRate;
+                    var sample = 0;
+                    var j = 1;
+
+                    while (j * frequency < nyquistFrequency) {
+                        sample += (1.0 / j) * Math.sin(2.0 * Math.PI * j * frequency * currentTime);
+                        ++j;
+                    }
+
+                    result.push(sample);
+                }
+
                 break;
 
             case "triangle-additive": // Triangle wave, additive synthesis
-                /**
-                * TODO: Complete this generator
-                **/
+                for (var i = 0; i < totalSamples; ++i) {
+                    var currentTime = i / sampleRate;
+                    var sample = 0;
+                    var j = 1;
+
+                    while (j * frequency < nyquistFrequency) {
+                        sample += (1.0 / (j * j)) * Math.cos(2.0 * Math.PI * j * frequency * currentTime);
+                        j += 2;
+                    }
+                    
+                    result.push(sample);
+                }
+
                 break;
 
             case "karplus-strong": // Karplus-Strong algorithm
@@ -61,21 +108,31 @@ var WaveformGenerator = {
                 break;
 
             case "white-noise": // White noise
-                /**
-                * TODO: Complete this generator
-                **/
+                for (var i = 0; i < totalSamples; i++) {
+                    result.push(Math.random() * amp * 2 - amp);
+                }
+
                 break;
 
             case "customized-additive-synthesis": // Customized additive synthesis
-                /**
-                * TODO: Complete this generator
-                **/
-
                 // Obtain all the required parameters
 				var harmonics = [];
 				for (var h = 1; h <= 10; ++h) {
 					harmonics.push($("#additive-f" + h).val());
-				}
+                }
+                
+                for (var i = 1; i < totalSamples; ++i) {
+                    var currentTime = i / sampleRate;
+                    var sample = 0;
+                    
+                    for (j = 1; j <= 10; ++j) {
+                        if (j * frequency < nyquistFrequency) {
+                            sample += parseFloat(harmonics[j-1]) * Math.sin(2.0 * Math.PI * j * frequency * currentTime);
+                        }
+                    }
+
+                    result.push(sample);
+                }
 
                 break;
 
