@@ -47,7 +47,7 @@ var WaveformGenerator = {
                         j += 2;
                     }
 
-                    result.push(sample);
+                    result.push(amp * sample);
                 }
 
                 break;
@@ -74,7 +74,7 @@ var WaveformGenerator = {
                         ++j;
                     }
 
-                    result.push(sample);
+                    result.push(amp * sample);
                 }
 
                 break;
@@ -90,7 +90,7 @@ var WaveformGenerator = {
                         j += 2;
                     }
                     
-                    result.push(sample);
+                    result.push(amp * sample);
                 }
 
                 break;
@@ -131,7 +131,7 @@ var WaveformGenerator = {
                         }
                     }
 
-                    result.push(sample);
+                    result.push(amp * sample);
                 }
 
                 break;
