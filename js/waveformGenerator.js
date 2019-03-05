@@ -137,21 +137,43 @@ var WaveformGenerator = {
                 break;
 
             case "fm": // FM
-                /**
-                * TODO: Complete this generator
-                **/
-
                 // Obtain all the required parameters
                 var carrierFrequency = parseInt($("#fm-carrier-frequency").val());
                 var carrierAmplitude = parseFloat($("#fm-carrier-amplitude").val());
                 var modulationFrequency = parseInt($("#fm-modulation-frequency").val());
                 var modulationAmplitude = parseFloat($("#fm-modulation-amplitude").val());
+                var useFrequecyMultiplier = $("#fm-use-freq-multiplier").prop("checked");
                 var useADSR = $("#fm-use-adsr").prop("checked");
+
+                if (useFrequecyMultiplier) {
+                    carrierFrequency = parseFloat(carrierFrequency) * frequency;
+                    modulationFrequency = parseFloat(modulationFrequency) * frequency;
+                }
+
                 if(useADSR) { // Obtain the ADSR parameters
                     var attackDuration = parseFloat($("#fm-adsr-attack-duration").val()) * sampleRate;
                     var decayDuration = parseFloat($("#fm-adsr-decay-duration").val()) * sampleRate;
                     var releaseDuration = parseFloat($("#fm-adsr-release-duration").val()) * sampleRate;
                     var sustainLevel = parseFloat($("#fm-adsr-sustain-level").val()) / 100.0;
+                }
+
+                for (var i = 0; i < totalSamples; ++i) {
+                    var currentTime = i / sampleRate;
+                    var modulator = modulationAmplitude * Math.sin(2.0 * Math.PI * modulationFrequency * currentTime);
+                    
+                    if (useADSR) {
+                        if (i < attackDuration) {
+                            modulator *= lerp(0, 1, i / attackDuration);
+                        } else if (i >= attackDuration && i < (attackDuration + decayDuration)) {
+                            modulator *= lerp(1, sustainLevel, (i - attackDuration) / decayDuration);
+                        } else if (i < (totalSamples - releaseDuration)) {
+                            modulator *= sustainLevel;
+                        } else {
+                            modulator *= lerp(sustainLevel, 0, (i + releaseDuration - totalSamples)/ releaseDuration);
+                        }
+                    }
+
+                    result.push(amp * carrierAmplitude * Math.sin(2.0 * Math.PI * carrierFrequency * currentTime + modulator));
                 }
 
                 break;
