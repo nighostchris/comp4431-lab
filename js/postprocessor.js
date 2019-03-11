@@ -109,23 +109,34 @@ Postprocessor = {
                 // Obtain all the required parameters
                 var delayLineDuration = parseFloat($("#echo-delay-line-duration").data("p" + pass));
                 var multiplier = parseFloat($("#echo-multiplier").data("p" + pass));
+                var delayLineSize = parseInt(delayLineDuration * sampleRate);
 
                 // Post-process every channels
                 for(var c = 0; c < channels.length; ++c) {
                     // Get the sample data of the channel
                     var audioSequence = channels[c].audioSequenceReference;
+
                     // Create a new empty delay line
+                    var delayLine = [];
+                    for (var a = 0; a < delayLineSize; a++)
+                        delayLine.push(0);
+                    
+                    var delayLineOutput;
 
                     // Get the sample data of the channel
                     for(var i = 0; i < audioSequence.data.length; ++i) {
                         // Get the echoed sample from the delay line
+                        delayLineOutput = delayLine[i % delayLineSize];
 
                         // Add the echoed sample to the current sample, with a multiplier
+                        audioSequence.data[i] = audioSequence.data[i] + delayLineOutput * multiplier;
 
                         // Put the current sample into the delay line
+                        delayLine[i % delayLineSize] = audioSequence.data[i];
                     }
 
                     // Update the sample data with the post-processed data
+                    channels[c].setAudioSequence(audioSequence);
                 }
                 break;
             
