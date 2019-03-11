@@ -81,10 +81,6 @@ Postprocessor = {
                 break;
 
             case "tremolo":
-                /**
-                * TODO: Complete this function
-                **/
-
                 // Obtain all the required parameters
                 var tremoloFrequency = parseFloat($("#tremolo-frequency").data("p" + pass));
                 var wetness = parseFloat($("#tremolo-wetness").data("p" + pass));
@@ -92,18 +88,24 @@ Postprocessor = {
                 // Post-process every channels
                 for(var c = 0; c < channels.length; ++c) {
                     // Get the sample data of the channel
+                    var audioSequence = channels[c].audioSequenceReference;
 
                     // For every sample, apply a tremolo multiplier
+                    for (var i = 0; i < audioSequence.data.length; i++) {
+                        var currentTime = i / sampleRate;
+                        var multiplier = Math.sin((2.0 * tremoloFrequency * currentTime * 180 + 270) * Math.PI / 180);
+                        multiplier = multiplier * wetness + (1 - wetness);
+
+                        audioSequence.data[i] *= multiplier;
+                    }
 
                     // Update the sample data with the post-processed data
+                    channels[c].setAudioSequence(audioSequence);
                 }
+
                 break;
 
             case "echo":
-                /**
-                * TODO: Complete this function
-                **/
-
                 // Obtain all the required parameters
                 var delayLineDuration = parseFloat($("#echo-delay-line-duration").data("p" + pass));
                 var multiplier = parseFloat($("#echo-multiplier").data("p" + pass));
@@ -111,7 +113,7 @@ Postprocessor = {
                 // Post-process every channels
                 for(var c = 0; c < channels.length; ++c) {
                     // Get the sample data of the channel
-
+                    var audioSequence = channels[c].audioSequenceReference;
                     // Create a new empty delay line
 
                     // Get the sample data of the channel

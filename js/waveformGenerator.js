@@ -96,20 +96,41 @@ var WaveformGenerator = {
                 break;
 
             case "karplus-strong": // Karplus-Strong algorithm
-                /**
-                * TODO: Complete this generator
-                **/
-
                 // Obtain all the required parameters
                 var base = $("#karplus-base>option:selected").val();
                 var b = parseFloat($("#karplus-b").val());
                 var delay = parseInt($("#karplus-p").val());
+                var karplusUseFrequency = $("#karplus-use-freq").prop("checked");
+
+                if (karplusUseFrequency)
+                    delay = sampleRate / frequency;
+
+                if (base == "sawtooth") {
+                    var decreaseRate = amp * 2 / delay;
+
+                    for (var i = 0; i <= delay; ++i) {
+                        var posInCycle = i % delay;
+                        result.push(amp - decreaseRate * posInCycle);
+                    }
+                }
+                else {
+                    for (var i = 0; i <= delay; ++i) {
+                        result.push(amp * (Math.random() * 2 - 1));
+                    }
+                }
+
+                for (var i = delay + 1; i < totalSamples; i++) {
+                    if (Math.random() < b)
+                        result.push(0.5 * (result[i - delay] + result[i - delay - 1]));
+                    else
+                        result.push(-0.5 * (result[i - delay] + result[i - delay - 1]));
+                }
 
                 break;
 
             case "white-noise": // White noise
                 for (var i = 0; i < totalSamples; i++) {
-                    result.push(Math.random() * amp * 2 - amp);
+                    result.push(amp * (Math.random() * 2 - 1));
                 }
 
                 break;
