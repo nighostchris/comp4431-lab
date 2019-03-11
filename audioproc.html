@@ -214,8 +214,8 @@
                             <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
                                 <label for="karplus-base">Input:</label>
                                 <select class="form-control" id="karplus-base">
-                                    <option value="256hz-sine">256Hz Sine Wave</option>
                                     <option value="white-noise">White Noise</option>
+                                    <option value="sawtooth">Sawtooth Wave</option>
                                 </select>
                             </div>
                             <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
@@ -227,10 +227,20 @@
                                 </div>
                             </div>
                             <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                <div class="form-inline">
+                                    <label for="karplus-use-freq">Find <i>p</i> from frequency:</label>
+                                    <div class="form-inline">
+                                        <div class="form-group">
+                                            <input class="form-control toggle-control" id="karplus-use-freq" type="checkbox" data-toggle-target="karplus-p" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
                                 <label for="karplus-b"><i>b</i>:</label>
                                 <div class="form-inline">
                                     <div class="form-group">
-                                        <input class="form-control" id="karplus-b" type="number" value="0.99" min="0" step="0.01">
+                                        <input class="form-control" id="karplus-b" type="number" value="1" min="0" step="0.01">
                                     </div>
                                 </div>
                             </div>
