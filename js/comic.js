@@ -74,29 +74,49 @@
      * Convert the colours in the input data to comic colours
      */
     imageproc.comicColor = function(inputData, outputData, saturation) {
-
-        /*
-         * TODO: You need to complete the comic colour function so that
-         * the pixels are mapped to one of the comic colours
-         */
-
         for (var i = 0; i < inputData.data.length; i += 4) {
             var r = inputData.data[i];
             var g = inputData.data[i + 1];
             var b = inputData.data[i + 2];
 
             // First, you convert the colour to HSL
+            var HSL = imageproc.fromRGBToHSL(r, g, b);
+
             // then, increase the saturation by the saturation factor
+            HSL["s"] *= saturation;
+
             // ***** beware of the final range of the saturation *****
+            if (HSL["s"] > 1) {
+                HSL["s"] = 1;
+            }
+
+            if (HSL["s"] < 0) {
+                HSL["s"] = 0;
+            }
+
             // after that, convert it back to RGB
+            var RGB = imageproc.fromHSLToRGB(HSL["h"], HSL["s"], HSL["l"]);
+            r = RGB["r"];
+            g = RGB["g"];
+            b = RGB["b"];
 
             // Second, based on the saturated colour, find the matching colour
             // from the comic colour palette
             // This is done by finding the minimum distance between the colours
+            var index;
+            var min = 999;
 
-            outputData.data[i]     = r;
-            outputData.data[i + 1] = g;
-            outputData.data[i + 2] = b;
+            for (var j = 0; j < palette.length; j++) {
+                var distance = Math.hypot((r - palette[j][0]), (g - palette[j][1]), (b - palette[j][2]));
+                if (distance < min) {
+                    min = distance;
+                    index = j;
+                }
+            }
+
+            outputData.data[i]     = palette[index][0];
+            outputData.data[i + 1] = palette[index][1];
+            outputData.data[i + 2] = palette[index][2];
         }
     }
  

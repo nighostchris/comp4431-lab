@@ -5,17 +5,43 @@
      * Apply ordered dithering to the input data
      */
     imageproc.dither = function(inputData, outputData, matrixType) {
-        /*
-         * TODO: You need to extend the dithering processing technique
-         * to include multiple matrix types
-         */
-
         // At the moment, the code works only for the Bayer's 2x2 matrix
         // You need to include other matrix types
         
         // Set up the matrix
-        var matrix = [ [1, 3], [4, 2] ];
-        var levels = 5;
+        var matrix, levels;
+
+        switch (matrixType) {
+            case "bayer2":
+                matrix = [ [1, 3], [4, 2] ];
+                levels = 5;
+                break;
+
+            case "bayer4":
+                matrix = [ [1, 9, 3, 11],
+                           [13, 5, 15, 7], 
+                           [4, 12, 2, 10],
+                           [16, 8, 14, 6] ];
+                levels = 17;
+                break;
+
+            case "line":
+                matrix = [ [15, 15, 15, 25],
+                           [15, 15, 25, 15],
+                           [15, 25, 15, 15],
+                           [25, 15, 15, 15] ];
+                levels = 100;
+                break;
+
+            case "diamond":
+                matrix = [ [15, 15, 25, 15, 15],
+                           [15, 25, 25, 25, 15],
+                           [25, 25, 25, 25, 25],
+                           [15, 25, 25, 25, 15],
+                           [15, 15, 25, 15, 15] ];
+                levels = 100;
+                break;
+        }
 
         // The following code uses Bayer's 2x2 matrix to create the
         // dithering effect. You need to extend it to work for different
@@ -30,7 +56,7 @@
                 value = value / 255 * levels;
 
                 /* Get the corresponding threshold of the pixel */
-                var threshold = matrix[y % 2][x % 2];
+                var threshold = matrix[y % matrix.length][x % matrix.length];
 
                 /* Set the colour to black or white based on threshold */
                 var i = (x + y * outputData.width) * 4;

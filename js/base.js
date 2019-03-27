@@ -32,22 +32,18 @@
     /*
      * Apply posterization to the input data
      */
-    imageproc.posterization = function(inputData, outputData,
-                                       redBits, greenBits, blueBits) {
-        /**
-         * TODO: You need to create the posterization effect here
-         */
-
+    imageproc.posterization = function(inputData, outputData, redBits, greenBits, blueBits) {
         // Create the red, green and blue masks
         // A function makeBitMask() is already given
-
+        var redMask = makeBitMask(redBits);
+        var greenMask = makeBitMask(greenBits);
+        var blueMask = makeBitMask(blueBits);
 
         // Apply the bitmasks onto the colour channels
-
         for (var i = 0; i < inputData.data.length; i += 4) {
-            outputData.data[i]     = inputData.data[i];
-            outputData.data[i + 1] = inputData.data[i + 1];
-            outputData.data[i + 2] = inputData.data[i + 2];
+            outputData.data[i]     = redMask & inputData.data[i];
+            outputData.data[i + 1] = greenMask & inputData.data[i + 1];
+            outputData.data[i + 2] = blueMask & inputData.data[i + 2];
         }
     }
 
@@ -55,19 +51,25 @@
      * Apply threshold to the input data
      */
     imageproc.threshold = function(inputData, outputData, thresholdValue) {
-        /**
-         * TODO: You need to create the thresholding effect here
-         */
-
+        console.log("threshold");
         for (var i = 0; i < inputData.data.length; i += 4) {
             // Find the grayscale value
             // You will apply thresholding on the grayscale value
+            var grayscaleValue = inputData.data[i] +
+                        inputData.data[i + 1] +
+                        inputData.data[i + 2];
+            grayscaleValue /= 3;
            
             // Change the colour to black or white based on the given threshold
-
-            outputData.data[i]     = inputData.data[i];
-            outputData.data[i + 1] = inputData.data[i + 1];
-            outputData.data[i + 2] = inputData.data[i + 2];
+            if (grayscaleValue > thresholdValue) {
+                outputData.data[i]     = 255;
+                outputData.data[i + 1] = 255;
+                outputData.data[i + 2] = 255;
+            } else {
+                outputData.data[i]     = 0;
+                outputData.data[i + 1] = 0;
+                outputData.data[i + 2] = 0;
+            }
         }
     }
 
