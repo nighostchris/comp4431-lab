@@ -16,18 +16,49 @@
             [ 0, 0, 0],
             [ 1, 2, 1]
         ];
-
-        /**
-         * TODO: You need to write the code to apply
-         * the two edge kernels appropriately
-         */
         
         for (var y = 0; y < inputData.height; y++) {
             for (var x = 0; x < inputData.width; x++) {
+                var sumRX = 0, sumGX = 0, sumBX = 0;
+                var sumRY = 0, sumGY = 0, sumBY = 0;
+
+                /* Sum the product of the kernel on the pixels */
+                for (var j = -1; j <= 1; j++) {
+                    for (var i = -1; i <= 1; i++) {
+                        var pixel = imageproc.getPixel(inputData, x + i, y + j);
+                        var coeffX = Gx[j + 1][i + 1];
+                        var coeffY = Gy[j + 1][i + 1];
+
+                        sumRX += pixel.r * coeffX;
+                        sumGX += pixel.g * coeffX;
+                        sumBX += pixel.b * coeffX;
+
+                        sumRY += pixel.r * coeffY;
+                        sumGY += pixel.g * coeffY;
+                        sumBY += pixel.b * coeffY;
+                    }
+                }
+
                 var i = (x + y * outputData.width) * 4;
-                outputData.data[i]     = inputData[i];
-                outputData.data[i + 1] = inputData[i + 1];
-                outputData.data[i + 2] = inputData[i + 2];
+                outputData.data[i]     = Math.hypot(sumRX, sumRY);
+                outputData.data[i + 1] = Math.hypot(sumGX, sumGY);
+                outputData.data[i + 2] = Math.hypot(sumBX, sumBY);
+
+                /* Apply thresholding on the outputData */
+                var grayscaleValue = outputData.data[i] +
+                        outputData.data[i + 1] +
+                        outputData.data[i + 2];
+                grayscaleValue /= 3;
+
+                if (grayscaleValue > threshold) {
+                    outputData.data[i]     = 255;
+                    outputData.data[i + 1] = 255;
+                    outputData.data[i + 2] = 255;
+                } else {
+                    outputData.data[i]     = 0;
+                    outputData.data[i + 1] = 0;
+                    outputData.data[i + 2] = 0;
+                }
             }
         }
     } 

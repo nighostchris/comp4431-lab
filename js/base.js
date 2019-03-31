@@ -51,7 +51,6 @@
      * Apply threshold to the input data
      */
     imageproc.threshold = function(inputData, outputData, thresholdValue) {
-        console.log("threshold");
         for (var i = 0; i < inputData.data.length; i += 4) {
             // Find the grayscale value
             // You will apply thresholding on the grayscale value
