@@ -77,29 +77,34 @@
      * Apply blur to the input data
      */
     imageproc.blur = function(inputData, outputData, kernelSize) {
-        /**
-         * TODO: You need to extend the blur effect to include different
-         * kernel sizes
-         */
-
         // You are given a 3x3 kernel but you need to create a proper kernel
         // using the given kernel size
-        var kernel = [ [1, 1, 1], [1, 1, 1], [1, 1, 1] ];
+        var kernel = [];
+        var fill = [];
+
+        for (var i = 0; i < kernelSize; i++) {
+            fill.push(1);
+        }
+
+        for (var i = 0; i < kernelSize; i++) {
+            kernel.push(fill);
+        }
 
         // The following code applies the 3x3 kernel to the image but the code
         // has hardcoded the size so you need to make changes to allow for
         // different kernel sizes
+        var kernelRange = Math.trunc(kernelSize / 2);
+        var divisor = Math.pow(kernelSize, 2);
 
         for (var y = 0; y < inputData.height; y++) {
             for (var x = 0; x < inputData.width; x++) {
                 var sumR = 0, sumG = 0, sumB = 0;
 
                 /* Sum the product of the kernel on the pixels */
-                for (var j = -1; j <= 1; j++) {
-                    for (var i = -1; i <= 1; i++) {
-                        var pixel =
-                            imageproc.getPixel(inputData, x + i, y + j);
-                        var coeff = kernel[j + 1][i + 1];
+                for (var j = -kernelRange; j <= kernelRange; j++) {
+                    for (var i = -kernelRange; i <= kernelRange; i++) {
+                        var pixel = imageproc.getPixel(inputData, x + i, y + j);
+                        var coeff = kernel[j + kernelRange][i + kernelRange];
 
                         sumR += pixel.r * coeff;
                         sumG += pixel.g * coeff;
@@ -109,9 +114,9 @@
 
                 /* Set the averaged pixel to the output data */
                 var i = (x + y * outputData.width) * 4;
-                outputData.data[i]     = sumR / 9;
-                outputData.data[i + 1] = sumG / 9;
-                outputData.data[i + 2] = sumB / 9;
+                outputData.data[i]     = sumR / divisor;
+                outputData.data[i + 1] = sumG / divisor;
+                outputData.data[i + 2] = sumB / divisor;
             }
         }
     } 
