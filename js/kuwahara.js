@@ -4,7 +4,7 @@
     /*
      * Apply Kuwahara filter to the input data
      */
-    imageproc.kuwahara = function(inputData, outputData, size) {
+    imageproc.kuwahara = function(inputData, outputData, type, size) {
         var regionSize = Math.trunc(size / 2) + 1;
         var regionRange = Math.trunc(regionSize / 2);
         var divisor = Math.pow(regionSize, 2);
