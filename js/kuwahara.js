@@ -4,7 +4,7 @@
     /*
      * Apply Kuwahara filter to the input data
      */
-    imageproc.kuwahara = function(inputData, outputData, type, size, sectorSize) {
+    imageproc.kuwahara = function(inputData, outputData, type, size, sectorSize, adaptiveNumber) {
         var regionSize, regionRange, divisor;
         
         switch(type) {
@@ -72,11 +72,11 @@
             var rRange = regionRange;
             var div = divisor;
 
-            for (var i = 0; i < 5; i++) {
-                var tempA = regionStat(x - rRange + i, y - rRange + i, inputData, rRange + i, div);
-                var tempB = regionStat(x + rRange + i, y - rRange + i, inputData, rRange + i, div);
-                var tempC = regionStat(x - rRange + i, y + rRange + i, inputData, rRange + i, div);
-                var tempD = regionStat(x + rRange + i, y + rRange + i, inputData, rRange + i, div);
+            for (var i = 0; i < adaptiveNumber; i++) {
+                var tempA = regionStat(x - rRange, y - rRange, inputData, rRange, div);
+                var tempB = regionStat(x + rRange, y - rRange, inputData, rRange, div);
+                var tempC = regionStat(x - rRange, y + rRange, inputData, rRange, div);
+                var tempD = regionStat(x + rRange, y + rRange, inputData, rRange, div);
 
                 if (i == 0) {
                     regionA = tempA;
